@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalPulse - Intelligent News Aggregator</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <script>
+        // Apply theme immediately to prevent flash
+        const savedTheme = localStorage.getItem('globalpulse_theme') || 'dark';
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    </script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm transition-theme">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-warning" href="#">
+                <i class="fas fa-globe-americas me-2"></i>GlobalPulse
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 category-nav">
+                    <li class="nav-item"><a class="nav-link active" href="#" data-category="Home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-category="Technology">Tech</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-category="Sports">Sports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-category="Finance">Finance</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-category="Politics">Politics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-category="Health">Health</a></li>
+                </ul>
+                <div class="d-flex position-relative me-3" id="searchContainer">
+                    <form class="d-flex" id="searchForm">
+                        <input class="form-control me-2 rounded-pill" type="search" id="searchInput" placeholder="Search news..." aria-label="Search" autocomplete="off">
+                        <button class="btn btn-outline-warning rounded-pill" type="submit"><i class="fas fa-search"></i></button>
+                    </form>
+                    <!-- Search History Panel -->
+                    <div id="searchHistoryDropdown" class="search-history-panel w-100 position-absolute d-none shadow-lg rounded-3 overflow-hidden" style="top: 100%; z-index: 1000; background: var(--bs-body-bg); border: 1px solid var(--bs-border-color);">
+                        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-body-tertiary">
+                            <span class="text-muted small fw-bold"><i class="fas fa-history me-2"></i>Recent Searches</span>
+                            <button class="btn btn-sm btn-link text-danger p-0 text-decoration-none fw-bold" id="clearHistoryBtn">Clear All</button>
+                        </div>
+                        <div id="searchHistoryList" class="py-1">
+                            <!-- Dynamic items -->
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-outline-warning rounded-circle me-3" id="themeToggleBtn" title="Toggle Light/Dark Mode">
+                    <i class="fas fa-sun" id="themeIcon"></i>
+                </button>
+                
+                <div class="d-flex" id="authSection">
+                    <button class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#registerModal">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        
+        <!-- Trending News Section -->
+        <div class="row mb-4" id="trendingSection">
+            <div class="col-12">
+                <h3 class="mb-3 border-bottom pb-2 border-secondary"><i class="fas fa-fire text-danger me-2"></i>Trending News</h3>
+                <div class="row" id="trendingContainer">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Latest News Section -->
+        <div class="row">
+            <div class="col-md-8">
+                <h3 class="mb-3 border-bottom pb-2 border-secondary" id="mainSectionTitle"><i class="fas fa-newspaper text-info me-2"></i>Latest Updates</h3>
+                <div class="row" id="newsContainer">
+                    <!-- Dynamic content -->
+                </div>
+                
+                <div class="text-center mt-4 mb-5" id="paginationGroup">
+                    <button class="btn btn-outline-warning rounded-pill px-4 me-2" id="prevPageBtn">Previous</button>
+                    <button class="btn btn-outline-warning rounded-pill px-4" id="nextPageBtn">Next</button>
+                    <div class="spinner-border text-warning d-none" id="loadingSpinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header fw-bold">
+                        <i class="fas fa-bolt text-warning me-2"></i>Breaking Alerts
+                    </div>
+                    <ul class="list-group list-group-flush" id="breakingContainer">
+                        <!-- Dynamic content -->
+                    </ul>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Welcome Back</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" id="loginUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">Login</button>
+                        <div class="text-center mt-3">
+                            <a href="#" class="text-warning small me-3" data-bs-toggle="modal" data-bs-target="#resetPasswordModal" data-bs-dismiss="modal">Forgot Password?</a>
+                            <a href="#" class="text-info small" data-bs-toggle="modal" data-bs-target="#forgotUsernameModal" data-bs-dismiss="modal">Forgot Username?</a>
+                        </div>
+                        <div id="loginError" class="text-danger mt-2 small d-none"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Username Modal -->
+    <div class="modal fade" id="forgotUsernameModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-id-card text-info me-2"></i>Recover Username</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Enter your registered email address and we'll retrieve your username.</p>
+                    <form id="forgotUsernameForm">
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="forgotEmail" required placeholder="Enter your email">
+                        </div>
+                        <button type="submit" class="btn btn-info w-100 text-white">Retrieve Username</button>
+                        <div id="forgotUsernameError" class="text-danger mt-2 small d-none"></div>
+                        <div id="forgotUsernameSuccess" class="text-success mt-2 small d-none"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create an Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" id="regUsername" required minlength="3">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="regEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="regPassword" required minlength="6">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">Sign Up</button>
+                        <div id="registerError" class="text-danger mt-2 small d-none"></div>
+                        <div id="registerSuccess" class="text-success mt-2 small d-none">Registration successful! You can now login.</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-key text-warning me-2"></i>Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Enter your registered username and email to reset your password.</p>
+                    <form id="resetPasswordForm">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" id="resetUsername" required placeholder="Your username">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Registered Email</label>
+                            <input type="email" class="form-control" id="resetEmail" required placeholder="Your email address">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="resetNewPassword" required minlength="6" placeholder="Min. 6 characters">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">Reset Password</button>
+                        <div id="resetPasswordError" class="text-danger mt-2 small d-none"></div>
+                        <div id="resetPasswordSuccess" class="text-success mt-2 small d-none"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-user-slash me-2"></i>Delete Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>This action is <strong>permanent</strong>. All bookmarks and data will be erased.</div>
+                    <form id="deleteAccountForm">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" id="deleteUsername" required placeholder="Confirm your username">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="deletePassword" required placeholder="Confirm your password">
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100">Permanently Delete Account</button>
+                        <div id="deleteAccountError" class="text-danger mt-2 small d-none"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="/js/app.js"></script>
+</body>
+</html>
